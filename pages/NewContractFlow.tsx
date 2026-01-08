@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -177,12 +178,12 @@ const NewContractFlow: React.FC<NewContractFlowProps> = ({ inventory, onSuccess 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
               <button 
                   onClick={() => { setPartyType('Customer'); setDirection('OUT'); }}
-                  aria-label="Select Customer Contract"
+                  aria-label="Select Client Contract"
                   className={`p-10 rounded-3xl border transition-all text-left flex flex-col items-start gap-4 shadow-sm group active:scale-95 ${partyType === 'Customer' ? 'border-blue-950 bg-white ring-4 ring-blue-950/5' : 'border-slate-200 bg-white hover:border-slate-400'}`}
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${partyType === 'Customer' ? 'bg-blue-950 text-emerald-400' : 'bg-slate-100 text-slate-400'}`}><User /></div>
-                <div className="text-2xl font-black uppercase tracking-tighter">Customer</div>
-                <p className="text-[10px] font-bold text-slate-500 uppercase leading-relaxed tracking-wide">Direct rental to production client.</p>
+                <div className="text-2xl font-black uppercase tracking-tighter">Client</div>
+                <p className="text-[10px] font-bold text-slate-500 uppercase leading-relaxed tracking-wide">Create new Client Contract</p>
               </button>
               <button 
                   onClick={() => { setPartyType('Vendor'); }}
@@ -191,6 +192,7 @@ const NewContractFlow: React.FC<NewContractFlowProps> = ({ inventory, onSuccess 
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${partyType === 'Vendor' ? 'bg-blue-950 text-emerald-400' : 'bg-slate-100 text-slate-400'}`}><Warehouse /></div>
                 <div className="text-2xl font-black uppercase tracking-tighter">Vendor</div>
+                <p className="text-[10px] font-bold text-slate-500 uppercase leading-relaxed tracking-wide">Inward or Outward Vendor Contract</p>
                 {partyType === 'Vendor' && (
                   <div className="flex gap-3 mt-6 w-full animate-in slide-in-from-top-2">
                     <button onClick={(e) => { e.stopPropagation(); setDirection('IN'); }} className={`flex-1 py-3 rounded-xl border-2 font-black text-[10px] uppercase tracking-widest ${direction === 'IN' ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-100'}`}>Inward</button>
@@ -212,15 +214,15 @@ const NewContractFlow: React.FC<NewContractFlowProps> = ({ inventory, onSuccess 
           <div className="space-y-8">
             <div className={`grid gap-8 ${partyType === 'Customer' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
                <div>
-                  <label htmlFor="party-name" className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">{partyType} Legal Name</label>
+                  <label htmlFor="party-name" className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">{partyType === 'Customer' ? 'Client' : 'Vendor'} Legal Name</label>
                   <select 
                     id="party-name"
-                    aria-label={`${partyType} select`}
+                    aria-label={`${partyType === 'Customer' ? 'Client' : 'Vendor'} select`}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 font-bold text-blue-950 outline-none appearance-none focus:ring-4 focus:ring-blue-950/5 transition-all" 
                     value={partyName} 
                     onChange={e => setPartyName(e.target.value)}
                   >
-                    <option value="">-- SELECT {partyType?.toUpperCase()} --</option>
+                    <option value="">-- SELECT {partyType === 'Customer' ? 'CLIENT' : 'VENDOR'} --</option>
                     {(partyType === 'Customer' ? PRODUCTION_OPTIONS : VENDOR_OPTIONS).map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
                 </div>
@@ -237,7 +239,7 @@ const NewContractFlow: React.FC<NewContractFlowProps> = ({ inventory, onSuccess 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                       <label htmlFor="assigned-customer" className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">
-                        Assigned Customer
+                        Assigned Client
                       </label>
                       {direction === 'IN' ? (
                         <select 
@@ -246,11 +248,11 @@ const NewContractFlow: React.FC<NewContractFlowProps> = ({ inventory, onSuccess 
                             value={assignedCustomer} 
                             onChange={e => setAssignedCustomer(e.target.value)}
                           >
-                            <option value="">-- SELECT CUSTOMER --</option>
+                            <option value="">-- SELECT CLIENT --</option>
                             {PRODUCTION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                           </select>
                       ) : (
-                        <input id="assigned-customer" type="text" className="w-full bg-white border border-slate-200 rounded-xl px-5 py-4 font-bold text-blue-950 outline-none uppercase placeholder:text-slate-300" placeholder="ENTER ASSIGNED CUSTOMER" value={assignedCustomer} onChange={e => setAssignedCustomer(e.target.value)} />
+                        <input id="assigned-customer" type="text" className="w-full bg-white border border-slate-200 rounded-xl px-5 py-4 font-bold text-blue-950 outline-none uppercase placeholder:text-slate-300" placeholder="ENTER ASSIGNED CLIENT" value={assignedCustomer} onChange={e => setAssignedCustomer(e.target.value)} />
                       )}
                     </div>
                     <div>
@@ -431,7 +433,7 @@ const NewContractFlow: React.FC<NewContractFlowProps> = ({ inventory, onSuccess 
                   <div className="text-[10px] font-bold leading-relaxed uppercase tracking-wide">
                     {partyType === 'Customer' && projectName && <div className="font-black text-white">Project: {projectName}</div>}
                     {partyType === 'Vendor' && assignedProject && <div className="font-black text-white">Assigned Project: {assignedProject}</div>}
-                    {partyType === 'Vendor' && assignedCustomer && <div className="mt-1 opacity-80 uppercase">Assigned Customer: {assignedCustomer}</div>}
+                    {partyType === 'Vendor' && assignedCustomer && <div className="mt-1 opacity-80 uppercase">Assigned Client: {assignedCustomer}</div>}
                     {billTo && <div className="mt-2 text-white/70 border-t border-white/10 pt-2 flex items-center gap-2"><FileText className="w-3 h-3" /> Bill To: {billTo}</div>}
                   </div>
                 </div>
