@@ -21,14 +21,30 @@ import { Contract, Equipment } from './types';
 type UserRole = 'admin' | 'manager' | null;
 
 const AdminLayout: React.FC<{ children: React.ReactNode; userRole: UserRole; onLogout: () => void }> = ({ children, userRole, onLogout }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Close sidebar on route change for mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [window.location.hash]);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <Navbar userRole={userRole} onLogout={onLogout} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <div className="flex-1 flex flex-col ml-64 overflow-hidden pt-1">
-          <Header />
-          <main className="flex-1 p-8 overflow-y-auto">
+      <Navbar userRole={userRole} onLogout={onLogout} onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className="flex flex-1 overflow-hidden relative">
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm" 
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        <div className="flex-1 flex flex-col lg:ml-64 w-full overflow-hidden pt-1">
+          <Header onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+          <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden">
             {children}
           </main>
         </div>
@@ -41,7 +57,7 @@ const ManagerLayout: React.FC<{ children: React.ReactNode; userRole: UserRole; o
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar userRole={userRole} onLogout={onLogout} />
-      <main className="flex-1 container mx-auto p-8 max-w-7xl">
+      <main className="flex-1 container mx-auto p-4 md:p-8 max-w-7xl">
         {children}
       </main>
     </div>

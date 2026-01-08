@@ -11,8 +11,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Standardized to Slate 50 */
-            color: #0f172a; /* Slate 900 */
+            background-color: #f8fafc;
+            color: #0f172a;
         }
         h1, h2, h3, h4 {
             font-family: 'Manrope', sans-serif;
@@ -34,6 +34,20 @@
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
+        
+        @keyframes jump {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        .jump-on-hover:hover .jump-target {
+          animation: jump 0.5s ease infinite;
+        }
+
+        .icon-glow-emerald { filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)); }
+        .icon-glow-amber { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
+        .icon-glow-blue { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4)); }
+        .icon-glow-rose { filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.4)); }
     </style>
 <script type="importmap">
 {

@@ -7,7 +7,7 @@ import {
   ArrowLeftRight, 
   Package, 
   BarChart3, 
-  Settings,
+  X,
   Home
 } from 'lucide-react';
 import Logo from './Logo';
@@ -20,15 +20,26 @@ const navItems = [
   { path: '/admin/reports', label: 'Reports', icon: BarChart3 },
 ];
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-blue-950 text-slate-300 border-r border-blue-900 flex flex-col z-50">
-      <div className="p-6 flex flex-col items-center gap-4 border-b border-blue-900 bg-blue-900/20">
+    <aside className={`fixed top-16 bottom-0 w-64 bg-blue-950 text-slate-300 border-r border-blue-900 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className="p-6 flex flex-col items-center gap-4 border-b border-blue-900 bg-blue-900/20 relative">
+        <button 
+          onClick={onClose}
+          className="lg:hidden absolute top-4 right-4 text-slate-500 hover:text-white"
+        >
+          <X className="w-5 h-5" />
+        </button>
         <Logo className="w-16 h-16" />
         <h2 className="text-sm font-black text-white uppercase tracking-tighter text-center">Admin Controls</h2>
       </div>
       
-      <nav className="flex-1 py-4 px-3 space-y-1">
+      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto custom-scroll">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
