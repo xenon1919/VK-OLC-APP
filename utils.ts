@@ -13,3 +13,11 @@ export const formatDate = (dateStr: string): string => {
   const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
   return new Intl.DateTimeFormat('en-GB', options).format(date);
 };
+
+export const calculateDaysElapsed = (startDateStr: string): number => {
+  const start = new Date(startDateStr);
+  const now = new Date();
+  const diffTime = now.getTime() - start.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0;
+};

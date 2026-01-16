@@ -2,19 +2,73 @@
 import { Contract, Transaction, Equipment, MovementHistory } from './types';
 
 export const contracts: Contract[] = [
-  { id: 'CON-001', partyName: 'Rishi Productions', partyType: 'Customer', direction: 'OUT', startDate: '2023-10-15', status: 'Open', totalAmount: 425000, manager: 'Ravi' },
-  { id: 'CON-002', partyName: 'Mumbai Light House', partyType: 'Vendor', direction: 'IN', startDate: '2023-11-01', status: 'Open', totalAmount: 185000, manager: 'Prasad' },
-  { id: 'CON-003', partyName: 'Sairam Studios', partyType: 'Customer', direction: 'OUT', startDate: '2023-09-20', status: 'Closed', totalAmount: 152000, manager: 'Narsimha' },
-  { id: 'CON-004', partyName: 'Lotus Films', partyType: 'Customer', direction: 'OUT', startDate: '2023-11-10', status: 'Open', totalAmount: 880000, manager: 'Shekar' },
-  { id: 'CON-005', partyName: 'Chennai Camera Rentals', partyType: 'Vendor', direction: 'IN', startDate: '2023-08-15', status: 'Closed', totalAmount: 121000, manager: 'Prasad' },
+  { 
+    id: 'CON-001', 
+    partyName: 'Rishi Productions', 
+    partyType: 'Customer', 
+    direction: 'OUT', 
+    startDate: '2023-10-15', 
+    status: 'Ongoing', 
+    totalAmount: 425000, 
+    manager: 'Ravi',
+    duration: 45,
+    quotations: [{ version: 1, editCount: 1, totalAmount: 425000, items: [], status: 'Approved', submittedAt: '2023-10-15' }]
+  },
+  { 
+    id: 'CON-002', 
+    partyName: 'Mumbai Light House', 
+    partyType: 'Vendor', 
+    direction: 'IN', 
+    startDate: '2024-11-01', 
+    status: 'Ongoing', 
+    totalAmount: 185000, 
+    manager: 'Prasad',
+    duration: 45,
+    quotations: [{ version: 1, editCount: 1, totalAmount: 185000, items: [], status: 'Approved', submittedAt: '2024-11-01' }]
+  },
+  { 
+    id: 'CON-004', 
+    partyName: 'Lotus Films', 
+    partyType: 'Customer', 
+    direction: 'OUT', 
+    startDate: '2024-11-10', 
+    status: 'Quotation Pending', 
+    totalAmount: 880000, 
+    manager: 'Shekar',
+    duration: 45,
+    quotations: [{ version: 1, editCount: 1, totalAmount: 880000, items: [], status: 'Submitted', submittedAt: '2024-11-10' }]
+  },
+  { 
+    id: 'CON-005', 
+    partyName: 'Suresh Arts', 
+    partyType: 'Customer', 
+    direction: 'OUT', 
+    startDate: '2023-05-20', 
+    status: 'Closed', 
+    totalAmount: 320000, 
+    manager: 'Ravi',
+    duration: 30,
+    quotations: [{ version: 1, editCount: 3, totalAmount: 320000, items: [], status: 'Approved', submittedAt: '2023-06-20' }]
+  },
+  { 
+    id: 'CON-006', 
+    partyName: 'Venkata Rentals', 
+    partyType: 'Vendor', 
+    direction: 'IN', 
+    startDate: '2023-08-12', 
+    status: 'Closed', 
+    totalAmount: 95000, 
+    manager: 'Prasad',
+    duration: 15,
+    quotations: [{ version: 1, editCount: 0, totalAmount: 95000, items: [], status: 'Approved', submittedAt: '2023-08-27' }]
+  },
 ];
 
 export const transactions: Transaction[] = [
   { id: 'TRX-1001', contractId: 'CON-001', date: '2023-10-15', partyName: 'Rishi Productions', direction: 'OUT', itemCount: 12, amount: 85000, tax: 15300, netAmount: 100300, manager: 'Ravi', notes: 'Phase 1 Production Gear' },
-  { id: 'TRX-1002', contractId: 'CON-002', date: '2023-11-01', partyName: 'Mumbai Light House', direction: 'IN', itemCount: 8, amount: 60000, tax: 10800, netAmount: 70800, manager: 'Prasad', notes: 'Backfill for Wedding Season' },
+  { id: 'TRX-1002', contractId: 'CON-002', date: '2024-11-01', partyName: 'Mumbai Light House', direction: 'IN', itemCount: 8, amount: 60000, tax: 10800, netAmount: 70800, manager: 'Prasad', notes: 'Backfill for Wedding Season' },
 ];
 
-// Helper to generate multiple units
 const generateUnits = (baseId: string, name: string, category: any, count: number, price: number, startCode: number): Equipment[] => {
   return Array.from({ length: count }).map((_, i) => ({
     id: `${baseId}-${i + 1}`,

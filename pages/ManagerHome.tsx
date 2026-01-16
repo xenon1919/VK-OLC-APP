@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { 
   PlusCircle, 
   ArrowRight, 
-  Activity, 
   RefreshCw, 
   ScrollText, 
-  History,
   ShieldCheck,
-  Zap
+  Zap,
+  History,
+  Activity
 } from 'lucide-react';
 
 const ManagerHome: React.FC = () => {
@@ -27,65 +27,65 @@ const ManagerHome: React.FC = () => {
         <p className="text-slate-400 font-bold text-[10px] md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase mt-2 md:mt-4 italic">Operational Command Terminal</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full max-w-5xl">
-        {/* New Contract Card */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-6xl">
+        {/* New Quotation Card */}
         <button 
           onClick={() => navigate('/new-contract')}
-          className="group relative bg-white border border-slate-200 p-8 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 text-left overflow-hidden active:scale-[0.97] jump-on-hover"
+          className="group relative bg-white border border-slate-200 p-8 rounded-[2rem] shadow-xl hover:border-emerald-500/50 hover:shadow-2xl transition-all duration-500 text-left active:scale-[0.97] jump-on-hover"
         >
-          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 group-hover:rotate-12 group-hover:scale-110 hidden sm:block">
-            <ScrollText className="w-32 md:w-48 h-32 md:h-48 text-emerald-600" />
-          </div>
-          
           <div className="relative z-10">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white rounded-[1.25rem] md:rounded-[1.75rem] flex items-center justify-center mb-6 md:mb-8 shadow-lg shadow-emerald-500/30 transition-transform duration-500 group-hover:rotate-6 jump-target">
-              <PlusCircle className="w-8 md:w-10 h-8 md:h-10 icon-glow-emerald" />
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white rounded-[1.25rem] flex items-center justify-center mb-6 shadow-lg jump-target">
+              <PlusCircle className="w-8 h-8 icon-glow-emerald" />
             </div>
-            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-               <h2 className="text-2xl md:text-4xl font-black text-blue-950 uppercase tracking-tighter">New Contract</h2>
-               <div className="p-1.5 md:p-2 bg-emerald-50 rounded-lg text-emerald-600 group-hover:bg-emerald-100 transition-colors">
-                 <ScrollText className="w-4 md:w-6 h-4 md:h-6" />
-               </div>
-            </div>
-            <p className="text-slate-500 font-bold text-xs md:text-base uppercase tracking-tight leading-relaxed max-w-[280px]">
-              New Client Deal. Gear allocation and pricing settlement.
+            <h2 className="text-2xl font-black text-blue-950 uppercase tracking-tighter mb-2">New Quotation</h2>
+            <p className="text-slate-500 font-bold text-xs uppercase tracking-tight leading-relaxed">
+              Start a fresh deal. Define gear list and first settlement rate.
             </p>
-            <div className="mt-8 md:mt-12 flex items-center gap-2 md:gap-3 text-emerald-600 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all">
-              Launch <ArrowRight className="w-4 md:w-5 h-4 md:h-5" />
+            <div className="mt-8 flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-[0.2em]">
+              Initialize <ArrowRight className="w-4 h-4" />
             </div>
           </div>
         </button>
 
-        {/* Update Order Card */}
+        {/* Update Quotation Card */}
+        <button 
+          onClick={() => navigate('/update-quotation')}
+          className="group relative bg-white border border-slate-200 p-8 rounded-[2rem] shadow-xl hover:border-blue-500/50 hover:shadow-2xl transition-all duration-500 text-left active:scale-[0.97] jump-on-hover"
+        >
+          <div className="relative z-10">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-700 text-white rounded-[1.25rem] flex items-center justify-center mb-6 shadow-lg jump-target">
+              <RefreshCw className="w-8 h-8 icon-glow-blue" />
+            </div>
+            <h2 className="text-2xl font-black text-blue-950 uppercase tracking-tighter mb-2">Negotiations</h2>
+            <p className="text-slate-500 font-bold text-xs uppercase tracking-tight leading-relaxed">
+              Revise pending quotations. Max 3 edits per version.
+            </p>
+            <div className="mt-8 flex items-center gap-2 text-blue-600 font-black text-[10px] uppercase tracking-[0.2em]">
+              Manage Drafts <ArrowRight className="w-4 h-4" />
+            </div>
+          </div>
+        </button>
+
+        {/* Add to Contract Card (Existing) */}
         <button 
           onClick={() => navigate('/add-to-contract')}
-          className="group relative bg-white border border-slate-200 p-8 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-xl hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 text-left overflow-hidden active:scale-[0.97] jump-on-hover"
+          className="group relative bg-white border border-slate-200 p-8 rounded-[2rem] shadow-xl hover:border-amber-500/50 hover:shadow-2xl transition-all duration-500 text-left active:scale-[0.97] jump-on-hover"
         >
-          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 group-hover:-rotate-12 group-hover:scale-110 hidden sm:block">
-            <History className="w-32 md:w-48 h-32 md:h-48 text-blue-600" />
-          </div>
-
           <div className="relative z-10">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-500 to-indigo-700 text-white rounded-[1.25rem] md:rounded-[1.75rem] flex items-center justify-center mb-6 md:mb-8 shadow-lg shadow-blue-500/30 transition-transform duration-500 group-hover:-rotate-6 jump-target">
-              <RefreshCw className="w-8 md:w-10 h-8 md:h-10 icon-glow-blue" />
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-600 text-white rounded-[1.25rem] flex items-center justify-center mb-6 shadow-lg jump-target">
+              <Activity className="w-8 h-8 icon-glow-amber" />
             </div>
-            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-              <h2 className="text-2xl md:text-4xl font-black text-blue-950 uppercase tracking-tighter">Update Order</h2>
-              <div className="p-1.5 md:p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:bg-blue-100 transition-colors">
-                 <History className="w-4 md:w-6 h-4 md:h-6" />
-               </div>
-            </div>
-            <p className="text-slate-500 font-bold text-xs md:text-base uppercase tracking-tight leading-relaxed max-w-[280px]">
-              Sub-rental / Vendor inward inventory modification.
+            <h2 className="text-2xl font-black text-blue-950 uppercase tracking-tighter mb-2">Update Orders</h2>
+            <p className="text-slate-500 font-bold text-xs uppercase tracking-tight leading-relaxed">
+              Append gear to ongoing agreements and operationalize fleet.
             </p>
-            <div className="mt-8 md:mt-12 flex items-center gap-2 md:gap-3 text-blue-600 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all">
-              Update <ArrowRight className="w-4 md:w-5 h-4 md:h-5" />
+            <div className="mt-8 flex items-center gap-2 text-amber-600 font-black text-[10px] uppercase tracking-[0.2em]">
+              Update Live Deals <ArrowRight className="w-4 h-4" />
             </div>
           </div>
         </button>
       </div>
 
-      {/* Quick Stats Footer */}
       <div className="mt-12 md:mt-20 flex flex-wrap justify-center gap-6 md:gap-12 animate-in fade-in duration-1000">
         <div className="flex flex-col items-center">
           <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fleet Active</span>
@@ -93,8 +93,8 @@ const ManagerHome: React.FC = () => {
         </div>
         <div className="hidden sm:block w-px h-10 bg-slate-200"></div>
         <div className="flex flex-col items-center">
-          <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Sessions</span>
-          <span className="text-xl md:text-2xl font-black text-blue-950 font-mono">18</span>
+          <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Negotiations</span>
+          <span className="text-xl md:text-2xl font-black text-blue-950 font-mono">08</span>
         </div>
         <div className="hidden sm:block w-px h-10 bg-slate-200"></div>
         <div className="flex flex-col items-center">

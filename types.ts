@@ -1,9 +1,18 @@
 
 export type Direction = 'IN' | 'OUT';
 export type PartyType = 'Customer' | 'Vendor';
-export type ContractStatus = 'Open' | 'Closed';
+export type ContractStatus = 'Quotation Pending' | 'Contract Pending' | 'Ongoing' | 'Closed' | 'Overdue';
 export type EquipmentCategory = 'Cameras' | 'Lenses' | 'Zooms' | 'Accessories' | 'Lights';
 export type EquipmentStatus = 'Available' | 'Outward (Customer)' | 'Outward (Vendor)' | 'Maintenance' | 'Lost';
+
+export interface Quotation {
+  version: number;
+  editCount: number; // Max 3
+  totalAmount: number;
+  items: { equipmentId: string; price: number }[];
+  status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'Superseded';
+  submittedAt?: string;
+}
 
 export interface Contract {
   id: string;
@@ -19,6 +28,7 @@ export interface Contract {
   assignedCustomer?: string;
   assignedProject?: string;
   billTo?: string;
+  quotations: Quotation[];
 }
 
 export interface Transaction {

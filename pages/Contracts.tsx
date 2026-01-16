@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Download, ChevronRight, User, Warehouse } from 'lucide-react';
-import { formatINR, formatDate } from '../utils';
+import { Search, Download, ChevronRight, User, Warehouse, AlertTriangle } from 'lucide-react';
+import { formatINR, formatDate, calculateDaysElapsed } from '../utils';
 import { Contract } from '../types';
 
 interface ContractsProps {
@@ -20,6 +20,32 @@ const Contracts: React.FC<ContractsProps> = ({ contracts }) => {
     const matchesType = partyTypeFilter === 'All' || c.partyType === partyTypeFilter;
     return matchesSearch && matchesType;
   });
+
+  const getStatusBadge = (contract: Contract) => {
+    const elapsedDays = calculateDaysElapsed(contract.startDate);
+    const tenureLimit = contract.duration || 45;
+    const isOverdue = elapsedDays > tenureLimit && contract.status === 'Ongoing';
+
+    if (isOverdue) {
+      return (
+        <span className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-100 text-rose-600 font-black text-[9px] uppercase tracking-widest flex items-center gap-1 w-fit">
+          <AlertTriangle className="w-3 h-3" /> Overdue
+        </span>
+      );
+    }
+
+    const baseStyles = "px-2.5 py-1 rounded-lg border font-black text-[9px] uppercase tracking-widest w-fit";
+    switch (contract.status) {
+      case 'Ongoing':
+        return <span className={`${baseStyles} bg-emerald-50 border-emerald-100 text-emerald-600`}>Ongoing</span>;
+      case 'Quotation Pending':
+        return <span className={`${baseStyles} bg-amber-50 border-amber-100 text-amber-600`}>Pending</span>;
+      case 'Closed':
+        return <span className={`${baseStyles} bg-slate-50 border-slate-100 text-slate-500`}>Closed</span>;
+      default:
+        return <span className={`${baseStyles} bg-slate-50 border-slate-100 text-slate-400`}>{contract.status}</span>;
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -59,12 +85,13 @@ const Contracts: React.FC<ContractsProps> = ({ contracts }) => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[700px]">
+          <table className="w-full text-left min-w-[850px]">
             <thead className="bg-white border-b border-slate-200">
               <tr>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider">Ref ID</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider">Entity Name</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider">Type</th>
+                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right">Value</th>
                 <th className="px-6 py-4 w-10"></th>
               </tr>
@@ -79,13 +106,16 @@ const Contracts: React.FC<ContractsProps> = ({ contracts }) => {
                   <td className="px-6 py-4 text-sm font-black text-slate-900">{contract.id}</td>
                   <td className="px-6 py-4">
                     <div className="text-sm font-black text-slate-900 uppercase truncate max-w-[200px]">{contract.partyName}</div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase mt-0.5 tracking-tight truncate">Manager: {contract.manager}</div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase mt-0.5 tracking-tight truncate">Started: {formatDate(contract.startDate)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase">
                       {contract.partyType === 'Customer' ? <User className="w-3 h-3 text-blue-500" /> : <Warehouse className="w-3 h-3 text-orange-500" />}
                       {contract.partyType}
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {getStatusBadge(contract)}
                   </td>
                   <td className="px-6 py-4 text-sm font-black text-slate-900 text-right font-mono whitespace-nowrap">
                     {formatINR(contract.totalAmount)}

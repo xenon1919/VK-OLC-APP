@@ -13,17 +13,17 @@ import InventoryDetail from './pages/InventoryDetail';
 import Reports from './pages/Reports';
 import ManagerHome from './pages/ManagerHome';
 import NewContractFlow from './pages/NewContractFlow';
+import UpdateQuotationFlow from './pages/UpdateQuotationFlow';
 import AddToContractFlow from './pages/AddToContractFlow';
 import Login from './pages/Login';
 import { contracts as initialContracts, inventory as initialInventory } from './mockData';
-import { Contract, Equipment } from './types';
+import { Contract, Equipment, Quotation } from './types';
 
 type UserRole = 'admin' | 'manager' | null;
 
 const AdminLayout: React.FC<{ children: React.ReactNode; userRole: UserRole; onLogout: () => void }> = ({ children, userRole, onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Close sidebar on route change for mobile
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [window.location.hash]);
@@ -33,15 +33,9 @@ const AdminLayout: React.FC<{ children: React.ReactNode; userRole: UserRole; onL
       <Navbar userRole={userRole} onLogout={onLogout} onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="flex flex-1 overflow-hidden relative">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        
-        {/* Mobile Sidebar Overlay */}
         {isSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm" 
-            onClick={() => setIsSidebarOpen(false)}
-          />
+          <div className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
         )}
-
         <div className="flex-1 flex flex-col lg:ml-64 w-full overflow-hidden pt-1">
           <Header onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
           <main className="flex-1 p-4 md:p-8 overflow-y-auto overflow-x-hidden">
@@ -68,7 +62,6 @@ const App: React.FC = () => {
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   
-  // Global Shared State
   const [contracts, setContracts] = useState<Contract[]>(initialContracts);
   const [inventory, setInventory] = useState<Equipment[]>(initialInventory);
 
@@ -99,9 +92,54 @@ const App: React.FC = () => {
     setContracts(prev => [contract, ...prev]);
   };
 
+  const updateQuotation = (contractId: string, updatedQuotation: Quotation, finalized?: boolean) => {
+    setContracts(prev => prev.map(c => {
+      if (c.id === contractId) {
+        return { 
+          ...c, 
+          quotations: [updatedQuotation], 
+          totalAmount: updatedQuotation.totalAmount,
+          status: finalized ? 'Ongoing' : c.status
+        };
+      }
+      return c;
+    }));
+
+    if (finalized) {
+      setInventory(prev => prev.map(item => {
+        const quoItem = updatedQuotation.items.find(qi => qi.equipmentId === item.id);
+        if (quoItem) {
+          const targetContract = contracts.find(con => con.id === contractId);
+          return {
+            ...item,
+            status: targetContract?.partyType === 'Customer' ? 'Outward (Customer)' as any : 'Outward (Vendor)' as any,
+            contractId: contractId,
+            currentHolder: targetContract?.partyName || 'Unit',
+            lastMovementDate: new Date().toISOString().split('T')[0]
+          };
+        }
+        return item;
+      }));
+    }
+  };
+
   const updateContractAmount = (contractId: string, additionalAmount: number) => {
     setContracts(prev => prev.map(c => 
       c.id === contractId ? { ...c, totalAmount: c.totalAmount + additionalAmount } : c
+    ));
+  };
+
+  const closeContract = (contractId: string) => {
+    setContracts(prev => prev.map(c => 
+      c.id === contractId ? { ...c, status: 'Closed' as const } : c
+    ));
+    setInventory(prev => prev.map(item => 
+      item.contractId === contractId ? { 
+        ...item, 
+        status: 'Available' as const, 
+        contractId: 'N/A', 
+        currentHolder: 'Main Warehouse' 
+      } : item
     ));
   };
 
@@ -110,13 +148,9 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/login" element={
-          userRole ? <Navigate to={userRole === 'admin' ? '/admin/dashboard' : '/'} /> : <Login onLogin={handleLogin} />
-        } />
-
-        <Route path="/" element={
-          userRole ? <ManagerLayout userRole={userRole} onLogout={handleLogout}><ManagerHome /></ManagerLayout> : <Navigate to="/login" />
-        } />
+        <Route path="/login" element={userRole ? <Navigate to={userRole === 'admin' ? '/admin/dashboard' : '/'} /> : <Login onLogin={handleLogin} />} />
+        <Route path="/" element={userRole ? <ManagerLayout userRole={userRole} onLogout={handleLogout}><ManagerHome /></ManagerLayout> : <Navigate to="/login" />} />
+        
         <Route path="/new-contract" element={
           userRole ? (
             <ManagerLayout userRole={userRole} onLogout={handleLogout}>
@@ -124,12 +158,25 @@ const App: React.FC = () => {
                 inventory={inventory} 
                 onSuccess={(contract, updatedItems) => {
                   addContract(contract);
-                  updateInventory(updatedItems);
+                  if (updatedItems.length) updateInventory(updatedItems);
                 }} 
               />
             </ManagerLayout>
           ) : <Navigate to="/login" />
         } />
+
+        <Route path="/update-quotation" element={
+          userRole ? (
+            <ManagerLayout userRole={userRole} onLogout={handleLogout}>
+              <UpdateQuotationFlow 
+                contracts={contracts} 
+                inventory={inventory} 
+                onUpdate={updateQuotation}
+              />
+            </ManagerLayout>
+          ) : <Navigate to="/login" />
+        } />
+
         <Route path="/add-to-contract" element={
           userRole ? (
             <ManagerLayout userRole={userRole} onLogout={handleLogout}>
@@ -152,12 +199,11 @@ const App: React.FC = () => {
                 <Route path="/" element={<Navigate to="/admin/dashboard" />} />
                 <Route path="dashboard" element={<Dashboard contracts={contracts} inventory={inventory} />} />
                 <Route path="contracts" element={<Contracts contracts={contracts} />} />
-                <Route path="contracts/:id" element={<ContractDetail contracts={contracts} inventory={inventory} />} />
+                <Route path="contracts/:id" element={<ContractDetail contracts={contracts} inventory={inventory} onEndContract={closeContract} />} />
                 <Route path="transactions" element={<Transactions />} />
                 <Route path="inventory" element={<Inventory inventory={inventory} setInventory={setInventory} />} />
                 <Route path="inventory/:id" element={<InventoryDetail inventory={inventory} />} />
                 <Route path="reports" element={<Reports />} />
-                <Route path="settings" element={<div className="p-8 text-slate-500 font-bold uppercase tracking-widest">Settings Panel</div>} />
               </Routes>
             </AdminLayout>
           ) : <Navigate to="/login" />
